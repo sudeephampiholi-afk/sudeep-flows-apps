@@ -1,0 +1,32 @@
+import react from '@vitejs/plugin-react';
+import { configDefaults, defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: ['vitest.setup.ts'],
+    exclude: [...configDefaults.exclude, '.claude/**', '.agents/**'],
+    // Aura reads `import.meta.env.VITEST` as its modules load. Inline the
+    // package so Vitest transforms it and defines that value.
+    server: {
+      deps: {
+        inline: [/@cognite\/aura/],
+      },
+    },
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      reporter: ['text', 'json', 'html', 'lcov'],
+      exclude: [
+        'src/**/*.{test,spec}.{ts,tsx}',
+        'src/vite-env.d.ts',
+        'src/main.tsx',
+      ],
+      thresholds: {
+        lines: 80,
+      },
+    },
+  },
+});
